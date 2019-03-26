@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="ru">
+
+  <head>
+    <!-- Стили -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+
+    <!-- Скрипты -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="/public/js/front.js"></script>
+
+    <!-- Шрифты -->
+    <link href="https://fonts.googleapis.com/css?family=Germania+One" rel="stylesheet">
+    
+    <!-- Настройка вкладки -->
+    <meta charset="utf-8" />
+    <title>BrainFuck Studio 2019</title>
+    <link rel="shortcut icon" href="/public/brain.png" type="image/x-icon">
+  </head>
+
+  <body>
+
+    <header>
+      <div class="row">
+        <div class="col-sm">
+          <h2 class="app-name">BrainFuck Studio 2019
+            <small> - <abbr id="file-name" data-toggle="tooltip" data-placement="top" title="Имя файла">new.bf</abbr></small>
+          </h2>
+          <div class="main-menu">
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+              <button type="button" class="btn btn-warning menu-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Файл
+              </button>
+              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <input id="create-file" class="btn btn-warning" type="submit" value="Создать" />
+                <input id="open-file" class="btn btn-warning" type="submit" value="Открыть" />
+                <input id="rename-file" class="btn btn-warning" type="submit" value="Переименовать" />
+                <input id="save-file" class="btn btn-warning" type="submit" value="Сохранить" />
+                <input id="close-file" class="btn btn-warning" type="submit" value="Закрыть" />
+              </div>
+              <input id="run-button" class="btn btn-warning menu-btn" type="submit" value="ЗАПУСТИТЬ" />
+              <input id="run-debug-button" class="btn btn-warning menu-btn" type="submit" value="ОТЛАДКА" />
+              <input id="about-button" class="btn btn-warning menu-btn" type="submit" value="О программе" />
+            </div>
+            <div>
+              <form action="/readFile" id="my-form" method="post" enctype="multipart/form-data">
+                <input id="open-file-input" name="this-file" type="file" value="" />
+              </form>
+              <a id="download-file" download="" href=""></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="main-space">
+        <div id="work-space" class="form-control" contentEditable="true"></div>
+      </div>
+      <div class="output">
+        <div class="main-space">
+          <textarea id="output-space" class="form-control" onkeydown="return false"></textarea>
+          <input id="output-close-button" class="btn btn-outline-warning btn-lg left-button" type="submit" value="&#9776;" />
+          <input id="output-clear-button" class="btn btn-outline-warning btn-lg left-button" type="reset" value="&#128722;" />
+        </div>
+      </div>
+    </main>
+
+    <% for(item of items) { %>
+      <%- include('modal', {item} ); %>
+    <% } %>
+
+
+  </body>
+
+</html>

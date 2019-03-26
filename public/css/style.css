@@ -1,0 +1,170 @@
+body {
+	background: #282923;
+	overflow-x: hidden;
+}
+
+textarea {
+    resize: none; 
+} 
+
+form, #download-file, #hex-editor{
+	display: none;
+}
+
+td, th {
+	padding-top: 5px;
+	padding-bottom: 50px;
+}
+
+table {
+	vertical-align: middle; 
+	width: 90%;
+    border: 1px solid black;
+    margin: auto;
+}
+
+@media screen and (max-width: 650px) {
+	.btn-group {
+		display: inline-block;
+	}
+
+	.left-button {
+		width: 99% !important;
+		margin-top: 10px !important;
+
+	}
+
+	#output-space {
+		width: 99%;
+	}
+
+	.modal-footer button {
+		width: 100% !important;
+		text-align: center;
+	}
+}
+
+#work-space {
+	width: 99%;
+    margin: auto;
+    height: 350px;
+    font-size: 35px;
+    overflow: auto;
+    background-color: #e0dbdb;
+}
+
+#output-space {
+    margin: auto 1% auto 0.5% ;
+    background-color: #e0dbdb;
+	width: 89%;
+	height: 110px;
+    overflow: auto;
+    float: left;
+	font-family: 'Germania One', cursive;
+    font-size: 20px;
+}
+
+.left-button {
+	width: 9% !important;
+	padding: auto !important;
+	text-align: center !important;
+}
+
+.app-name {
+	color: #e0dbdb;
+	margin: 0px;
+	padding: 0px 0px 5px 15px;
+	border-bottom: 1px solid #938f8f;
+	border-radius: 10px;
+	font-family: 'Germania One', cursive;
+}
+
+.btn {
+	color: #e0dbdb;
+	background: #42433e;
+	width: 95%;
+	text-align: left;
+	border: 1px solid #938f8f;
+	margin: 0px 3px 1% 0px;
+	border-radius: 5px;
+}
+
+.dropdown-menu {
+	background: #282923;
+	border: 1px solid #938f8f;
+	padding: 5px;
+	border-radius: 8px;
+	width: 40%;
+}
+
+.menu-btn {
+	margin-bottom: 0px !important;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+.dropdown-item {
+	color: #e0dbdb;
+}
+
+.main-menu {
+	width: 100%;
+	border-top: 1px solid #938f8f;
+	border-bottom: 1px solid #938f8f;
+	border-radius: 8px;
+}
+
+.main-space {
+	border-top: 1px solid #938f8f;
+	border-bottom: 1px solid #938f8f;
+	border-radius: 8px;
+	padding: 10px 0px;
+	margin-bottom: 10px
+}
+
+
+.modal-header {
+	background: #e0a800;
+}
+
+.modal-content {
+	border-radius: 15px;
+}
+
+.modal-header {
+	border-radius: 15px 15px 0 0;
+}
+
+.modal-footer button {
+	width: 30%;
+	text-align: center;
+}
+
+.warning {
+	color: #ff8c00;
+}
+
+.primary {
+	color: #0000ff;
+}
+
+.danger {
+	color: #cc0605;
+}
+
+.success {
+	color: #00ff00;
+}
+
+.simple {
+	color: #7d7f7d;
+}
+
+#table-responsive {
+	margin: auto 0;
+	padding: auto;
+}
+
+.output {
+	display: none;
+}
