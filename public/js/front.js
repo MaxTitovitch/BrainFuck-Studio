@@ -11,21 +11,23 @@ const DATA_COLORING_ARRAY = [
     ["[", "<code class='success'>[</code>"],
     ["]", "<code class='success'>]</code>"]
 ];
-const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"];
+const ELEMENTS = ["div #create-file", "div #save-create", "div #open-file", "#rename-file", "div #save-file","#close-file", "#save-last-file", "#close-last-file", "div #run-button", "div #run-debug-button", "div #run-onebug-button", "#enter-success", "#enter-cansel", "#debug-success", "#onebug-success", "#debug-cansel", "div div #output-show-button", "div #output-close-button", "div #output-clear-button", "div #about-button", "#ok-alert", "body"];
+const EVENTS_CLICK = [create, saveCreation, open, rename, save, close, saveLastFile, closeLastFile, runInterpretation, runDebug, runOneBug, enterSuccess, enterCansel, debugSuccess, oneBugSuccess, degusCansel, showOutputButton, closeOutputButton, clearOutputButton, sendAbout, onOkAlert, hideMenu];
+
+const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"], DEFAULT_FILE_NAME = "new.bf", SIXTEEN_BIT_RESTRICTION = 65535, CELLS_QUANTITY = 300;
 const FUNCTIONS = [incrementPointer, decrementPointer, incrementValue, decrementValue, outputValue, inputValue,
     debugData, startCycle, endCycle];
-const DEFAULT_FILE_NAME = "new.bf", SIXTEEN_BIT_RESTRICTION = 65535;
+
 var fileName = DEFAULT_FILE_NAME, lastFileName = DEFAULT_FILE_NAME, isClear, lastFunction;
-var idBrainFuck, pointerBrainFuck, arrayBrainFuck, breakBrainFuck, commandsBrainFuck, isDebug;
+var idBrainFuck, pointerBrainFuck, arrayBrainFuck, breakBrainFuck, commandsBrainFuck, isDebug, isOneStap;
 
 
 //Регистрирование событий
 
 jQuery(function($) {
-    const ELEMENTS = ["#create-file", "#save-create", "#open-file", "#rename-file", "#save-file","#close-file", "#save-last-file", "#close-last-file", "#run-button", "#run-debug-button", "#enter-success", "#enter-cansel", "#debug-success", "#debug-cansel", "#output-close-button", "#output-clear-button", "#about-button", "#ok-alert"];
-    const FUNCTIONS = [create, saveCreation, open, rename, save, close, saveLastFile, closeLastFile, runInterpretation, runDebug, enterSuccess, enterCansel, degusSuccess, degusCansel, closeOutputButton, clearOutputButton, sendAbout, onOkAlert]
+
     for (var i = 0; i < ELEMENTS.length; i++) {
-        addEvent(ELEMENTS[i], "click" ,FUNCTIONS[i]);
+        addEvent(ELEMENTS[i], "mousedown" , EVENTS_CLICK[i]);
     }
     addNotClickEvents();
 });
@@ -38,6 +40,8 @@ function addNotClickEvents() {
     $("#work-space").on("keypress", closeBadSimbols);
     $("#work-space").on("keydown", redirectTabPress);
     $('#open-file-input').on("change", sendFileToServer);
+    $('.btn-group button').on("mouseover", viewAllMenu);
+    $('.btn-group button').on("mousedown", showMenu);
     document.getElementById('work-space').onpaste = onPaste;
 }
 
@@ -113,12 +117,17 @@ function saveCreation() {
     var enterFileName = $("#enter-file-name").val();
     if(isGoodFileName(enterFileName)) {
         fileName = enterFileName + (!isNeedExtension(enterFileName) ? ".bf" : "");
-        $("#file-name").text(fileName);
+        changeFileName();
         if(isClear) $("#work-space").text("");
         cearSaveModal();
     } else {
         $("#error-in-name").text("Введите корректное название!");
     }
+}
+
+function changeFileName() {
+    $("#file-name").text(fileName);
+    $("title").text("BrainFuck Studio 2019 - " + fileName);    
 }
 
 function cearSaveModal() {
@@ -149,7 +158,7 @@ function save() {
 function close() {
     if(isSaved(close)){
         fileName = DEFAULT_FILE_NAME;
-        $("#file-name").text(fileName);
+        changeFileName();
         $("#work-space").text("");
     }
 }
@@ -167,6 +176,33 @@ function clearWorkSpace() {
     $("#work-space").text("");
     $('#saveModal').modal("hide");
     lastFunction(); 
+}
+
+function viewAllMenu(event) {
+    var showingMenu = $("div.show");
+    var quantity = showingMenu.length;
+    if(quantity > 0){
+        showingMenu.removeClass("show");
+        $(this).parent().children("div.dropdown-menu").addClass("show");
+    }
+    return false;
+}
+
+function showMenu(event) {
+    var showingMenu = $(this).parent().children(".dropdown-menu").addClass("show");
+    focusLastArea();
+    event.stopPropagation();
+    event.preventDefault();
+}
+
+function focusLastArea() {
+    var areaId = $("#work-space:focus, #output-space:focus").attr("id");
+    $("#" + areaId).focus();
+}
+
+function hideMenu(event) {
+    // event.preventDefault();
+    var showingMenu = $(".btn-group div.show").removeClass("show");
 }
 
 
@@ -393,7 +429,7 @@ function checkFile(fileData) {
         fileName = lastFileName;
         runAlert("В файле содержатется недопустимая информация!");
     }
-    $("#file-name").text(fileName);
+    changeFileName();
 }
 
 function replaceOuterData(text) {
@@ -424,32 +460,37 @@ function prepareInjectText(lastText, paste, position) {
 // Работа с BrainFuck
 
 function runInterpretation() {
-    runProgramm(false);
+    runProgramm(false, false);
 
 }
 
 function runDebug() {
-    runProgramm(true);
+    runProgramm(true, false);
 }
 
-function runProgramm(isNeededDebug) {
-    resetInterpretation(isNeededDebug);
-    $(".output").css( {"display": "block"} );
+function runOneBug() {
+    runProgramm(true, true);
+}
+
+function runProgramm(isNeededDebug, isHardDebug) {
+    resetInterpretation(isNeededDebug, isHardDebug);
+    showOutputButton();
     commandsBrainFuck = replace($("#work-space").text(), false).split("");
     preCheckingCode();
 }
 
-function resetInterpretation(isNeededDebug) {
+function resetInterpretation(isNeededDebug, isHardDebug) {
     idBrainFuck = 0;
     pointerBrainFuck = 0;
     arrayBrainFuck = generateArray(); 
     breakBrainFuck = 0;
     isDebug = isNeededDebug;
+    isOneStap = isHardDebug;
 }
 
 function generateArray() {
     var array = [];
-    for (var i = 0; i < 30000; i++) {
+    for (var i = 0; i < CELLS_QUANTITY; i++) {
         array.push(0);
     }
     return array;
@@ -485,23 +526,27 @@ function parse(){
                 if((answer = FUNCTIONS[i]()) != "") {
                     printOutput(answer + "\n");
                     return "";
+                } 
+                if(i == 5 && isOneStap || (i == 6 && isDebug && !isOneStap)) return "";
+                if(isOneStap && i != 6) {
+                    stopRunning();
+                    return "";
                 }
-                if(i == 5 || (i == 6 && isDebug)) return "";
-                else break;
             }
         }
     } 
 }
 
 function printOutput(text) {
-    $("#output-space").val($("#output-space").val()  + text)
+    $("#output-space").val($("#output-space").val()  + text);
+    toggleElement ("div #output-clear-button", false);
 }
 
 function incrementPointer() {
-    if(pointerBrainFuck + 1 < 30000) {
+    if(pointerBrainFuck + 1 < CELLS_QUANTITY) {
         pointerBrainFuck++;
         return "";
-    } else return "Ошибка! указатель вышел за лимит 30000!";
+    } else return "Ошибка! указатель вышел за лимит " + CELLS_QUANTITY + "!";
 }
 
 function decrementPointer() {
@@ -537,7 +582,7 @@ function inputValue() {
 }
 
 function debugData() {
-    if (isDebug){
+    if (isDebug && !isOneStap){
         stopRunning();
     } 
     return "";
@@ -592,11 +637,15 @@ function stopRunning() {
 
 function addTable() {
     for (var i = 0; i < arrayBrainFuck.length; i++) {
-        if(i == pointerBrainFuck ){
-            addOneRow(i, "<==");
-        } else if(arrayBrainFuck[i] != 0){
-            addOneRow(i, "");
-        }
+        // if(i == pointerBrainFuck ){
+        //     addOneRow(i, "<==");
+        // } else if(arrayBrainFuck[i] != 0){
+        //     addOneRow(i, "");
+        // }
+        
+        var pointer = i != pointerBrainFuck ? "" : "<==";
+        addOneRow(i, pointer);
+
     }
 }
 
@@ -725,8 +774,11 @@ function enterSuccess() {
     } else {
         enterCansel();
         arrayBrainFuck[pointerBrainFuck] = userData;
-        idBrainFuck++;
-        preCheckingCode();
+        if(isOneStap) stopRunning();
+        else {
+            idBrainFuck++;
+            preCheckingCode();
+        }
     }
 }
 
@@ -763,13 +815,37 @@ function enterCansel() {
     $("#error-in-data").text("");
 }
 
+function toggleElement(element, isShow) {
+    if(isShow) {
+        $(element).attr("disabled", true);
+        $(element).addClass("disabled");
+    } else {
+        $(element).removeAttr("disabled");
+        $(element).removeClass("disabled");
+    }
+}
+
+function managementOutputMenu(isShow) {
+    toggleElement("div #output-show-button", isShow);
+    toggleElement("div #output-close-button", !isShow);
+    toggleElement("div #output-clear-button", !isShow);
+}
+
+function showOutputButton() {
+    managementOutputMenu(true);
+    $(".output").css( {"display": "block", "position": "absolute"} );
+    $(".first-space").css({"height":"55%"});
+}
 
 function closeOutputButton() {
+    managementOutputMenu(false);
     $(".output").css({"display":"none"});
+    $(".first-space").css({"height":"75%"});
 }
 
 function clearOutputButton() {
-    $("#output-space").val("");
+    $("div #output-space").val("");
+    toggleElement ("div #output-clear-button", true);
 }
 
 function checkData(string) {
@@ -785,9 +861,17 @@ function checkData(string) {
     }
 }
 
-function degusSuccess() {
+function debugSuccess() {
     clearDebugModal();
     idBrainFuck++;
+    isOneStap = false;
+    preCheckingCode();
+}
+
+function oneBugSuccess() {
+    clearDebugModal();
+    idBrainFuck++;
+    isOneStap = true;
     preCheckingCode();
 }
 

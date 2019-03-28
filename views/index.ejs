@@ -17,7 +17,7 @@
     
     <!-- Настройка вкладки -->
     <meta charset="utf-8" />
-    <title>BrainFuck Studio 2019</title>
+    <title>BrainFuck Studio 2019 - new.bf</title>
     <link rel="shortcut icon" href="/public/brain.png" type="image/x-icon">
   </head>
 
@@ -29,21 +29,75 @@
           <h2 class="app-name">BrainFuck Studio 2019
             <small> - <abbr id="file-name" data-toggle="tooltip" data-placement="top" title="Имя файла">new.bf</abbr></small>
           </h2>
-          <div class="main-menu">
-            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-              <button type="button" class="btn btn-warning menu-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Файл
-              </button>
-              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <input id="create-file" class="btn btn-warning" type="submit" value="Создать" />
-                <input id="open-file" class="btn btn-warning" type="submit" value="Открыть" />
-                <input id="rename-file" class="btn btn-warning" type="submit" value="Переименовать" />
-                <input id="save-file" class="btn btn-warning" type="submit" value="Сохранить" />
-                <input id="close-file" class="btn btn-warning" type="submit" value="Закрыть" />
+          <div class="">
+
+            <div class="main-menu">
+              <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                  <button type="button" class="btn btn-simple menu-btn" id="menu-file" >
+                    Файл
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="menu-file">
+                    <input id="create-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Создать" />
+                    <input id="open-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Открыть" />
+                    <input id="rename-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Переименовать" />
+                    <input id="save-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Сохранить" />
+                    <input id="open-server-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Открыть (сервер)" />
+                    <input id="save-server-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Сохранить (сервер)" />
+                    <input id="delete-server-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Удалить (сервер)" />
+                    <input id="close-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Закрыть" />
+                  </div>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                  <button type="button" class="btn btn-simple menu-btn" id="menu-edit" >
+                    Вид
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="menu-file">
+                    <input id="output-show-button" class="btn btn-simple menu-btn second-menu" type="submit" value="Показать вывод" />
+                    <input id="output-close-button" class="btn btn-simple menu-btn second-menu disabled" type="submit" disabled value="Скрыть вывод" />
+                    <input id="output-clear-button" class="btn btn-simple menu-btn second-menu disabled" type="submit" disabled value="Очистить вывод" />
+                  </div>
+                </div>
+
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                  <button type="button" class="btn btn-simple menu-btn" id="menu-run" aria-haspopup="true" >
+                    Запуск
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="menu-run">
+                    <input id="run-button" class="btn btn-simple menu-btn second-menu" type="submit" value="Запуск" />
+                    <input id="run-debug-button" class="btn btn-simple menu-btn second-menu" type="submit" value="Отладка" />
+                    <input id="run-onebug-button" class="btn btn-simple menu-btn second-menu" type="submit" value="Пошаговая" />
+                  </div>
+                </div>
+                <input id="about-button" class="btn btn-simple menu-btn" type="submit" value="О программе" />
               </div>
-              <input id="run-button" class="btn btn-warning menu-btn" type="submit" value="ЗАПУСТИТЬ" />
-              <input id="run-debug-button" class="btn btn-warning menu-btn" type="submit" value="ОТЛАДКА" />
-              <input id="about-button" class="btn btn-warning menu-btn" type="submit" value="О программе" />
+            </div>
+
+            <div class="main-menu">
+              <input type="image" src="/public/images/create.png" class="image-button" id="create-file" />
+              <input type="image" src="/public/images/open.png" class="image-button" id="open-server-file" />
+              <input type="image" src="/public/images/save.png" class="image-button" id="save-server-file" />
+              <input type="image" src="/public/images/delete.png" class="image-button" id="delete-server-file" /> 
+              <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
+
+              <input type="image" src="/public/images/upload.png" class="image-button" id="open-file" />
+              <input type="image" src="/public/images/download.png" class="image-button" id="save-file" /> 
+              <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
+
+              <input type="image" src="/public/images/show.png" class="image-button" id="output-show-button" /> 
+              <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
+
+
+              <input type="image" src="/public/images/run.png" class="image-button" id="run-button" />
+              <input type="image" src="/public/images/debug.png" class="image-button" id="run-debug-button" />
+              <input type="image" src="/public/images/onebug.png" class="image-button" id="run-onebug-button" /> 
+              <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
+
+              <input type="image" src="/public/images/help.png" class="image-button" id="about-button" /> 
+              <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
+
+
             </div>
             <div>
               <form action="/readFile" id="my-form" method="post" enctype="multipart/form-data">
@@ -57,14 +111,14 @@
     </header>
 
     <main>
-      <div class="main-space">
+      <div class="main-space first-space">
         <div id="work-space" class="form-control" contentEditable="true"></div>
       </div>
       <div class="output">
         <div class="main-space">
           <textarea id="output-space" class="form-control" onkeydown="return false"></textarea>
-          <input id="output-close-button" class="btn btn-outline-warning btn-lg left-button" type="submit" value="&#9776;" />
-          <input id="output-clear-button" class="btn btn-outline-warning btn-lg left-button" type="reset" value="&#128722;" />
+          <input id="output-close-button" type="image" src="/public/images/hide.png" class="image-button left-button" />
+          <input id="output-clear-button" type="image" src="/public/images/clear.png" class="image-button left-button disabled" disabled="true" /> 
         </div>
       </div>
     </main>

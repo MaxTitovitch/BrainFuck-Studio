@@ -4,7 +4,7 @@
     "title": "Уведомление",
     "needButtonClose" : true,
     "body": "<p id='alert-text'></p>", 
-    "footer" : "<button type='button' id='ok-alert' class='btn btn-outline-warning'>Ок</button>"
+    "footer" : "<button type='button' id='ok-alert' class='btn btn-outline-simple'>Ок</button>"
   }, 
 
   {
@@ -12,7 +12,7 @@
     "title": "Ввод имени файла",
     "needButtonClose" : true,
     "body": "<p id='error-in-name' class='text-danger'></p><label for='enter-file-name'>Введите название файла:</label><input type='text' id='enter-file-name' class='form-control'>", 
-    "footer" : "<button type='button' id='save-create' class='btn btn-outline-warning'>Сохранить</button>"
+    "footer" : "<button type='button' id='save-create' class='btn btn-outline-simple'>Сохранить</button>"
   },
 
   {
@@ -20,7 +20,7 @@
     "title": "Есть несохранённые данные",
     "needButtonClose" : true,
     "body": "<p>Сохранить текущий файл с кодом?</p>", 
-    "footer" : "<button type='button' id='save-last-file' class=' btn btn-outline-warning'>Сохранить</button><button type='button' id='close-last-file' class='btn btn-outline-warning'>Не сохранять</button>"
+    "footer" : "<button type='button' id='save-last-file' class=' btn btn-outline-simple'>Сохранить</button><button type='button' id='close-last-file' class='btn btn-outline-simple'>Не сохранять</button>"
   },
 
   {
@@ -28,7 +28,7 @@
     "title": "Введите данные?",
     "needButtonClose" : false,
     "body": "<p id='error-in-data' class='text-danger'></p><label for='enter-data'>Введите данные(символ, либо код):</label><input type='text' id='enter-data' class='form-control' placeholder='0'>", 
-    "footer" : "<button type='button' id='enter-success' class='btn btn-outline-warning'>Ввести</button><button type='button' id='enter-cansel' class='btn btn-outline-warning'>Выйти</button>"
+    "footer" : "<button type='button' id='enter-success' class='btn btn-outline-simple'>Ввести</button><button type='button' id='enter-cansel' class='btn btn-outline-simple'>Выйти</button>"
   },
 
   {
@@ -36,6 +36,6 @@
     "title": "Отладка!",
     "needButtonClose" : false,
     "body": "<div class='containerr'><table border='1' class='table' id='debugging'><thead class='thead-dark'><tr id='non-del'><th scope='col'>Address</th><th scope='col'>DEX</th><th scope='col'>HEX</th><th scope='col'>Pointer</th></tr></thead><tbody></tbody></table></div>", 
-    "footer" : "<button type='button' id='debug-success' class='btn btn-outline-warning'>Продолжить</button><button type='button' id='debug-cansel' class='btn btn-outline-warning'>Выйти</button>"
+    "footer" : "<button type='button' id='debug-success' class='btn btn-outline-simple'>Продолжить</button><button type='button' id='onebug-success' class='btn btn-outline-simple'>Один Шаг</button><button type='button' id='debug-cansel' class='btn btn-outline-simple'>Выйти</button>"
   }
 ]
