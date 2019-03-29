@@ -14,7 +14,7 @@ const DATA_COLORING_ARRAY = [
 const ELEMENTS = ["div #create-file", "div #save-create", "div #open-file", "#rename-file", "div #save-file","#close-file", "#save-last-file", "#close-last-file", "div #run-button", "div #run-debug-button", "div #run-onebug-button", "#enter-success", "#enter-cansel", "#debug-success", "#onebug-success", "#debug-cansel", "div div #output-show-button", "div #output-close-button", "div #output-clear-button", "div #about-button", "#ok-alert", "body"];
 const EVENTS_CLICK = [create, saveCreation, open, rename, save, close, saveLastFile, closeLastFile, runInterpretation, runDebug, runOneBug, enterSuccess, enterCansel, debugSuccess, oneBugSuccess, degusCansel, showOutputButton, closeOutputButton, clearOutputButton, sendAbout, onOkAlert, hideMenu];
 
-const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"], DEFAULT_FILE_NAME = "new.bf", TWELVE_BIT_RESTRICTION = 4095, CELLS_QUANTITY = 300;
+const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"], DEFAULT_FILE_NAME = "new.bf", BITS = 3, TWELVE_BIT_RESTRICTION = 4095, CELLS_QUANTITY = 300;
 const FUNCTIONS = [incrementPointer, decrementPointer, incrementValue, decrementValue, outputValue, inputValue, debugData, startCycle, endCycle];
 
 var fileName = DEFAULT_FILE_NAME, lastFileName = DEFAULT_FILE_NAME, isClear, lastFunction;
@@ -38,6 +38,11 @@ function addEvent(element, event, callback) {
 function addNotClickEvents() {
     $("#work-space").on("keypress", closeBadSimbols);
     $("#work-space").on("keydown", redirectTabPress);
+    $("#enter-data").on("keydown", enterDataCode);
+    $("#enter-data-simbol").on("keydown", enterDataSimbol);
+    $("#enter-data").on("paste", pasteDataCode);
+    $("#enter-data").on("focusout", focusoutDataCode);
+    $("#enter-data-simbol").on("paste", pasteDataSimbol);
     $('#open-file-input').on("change", sendFileToServer);
     $('.btn-group button').on("mouseover", viewAllMenu);
     $('.btn-group button').on("mousedown", showMenu);
@@ -200,7 +205,6 @@ function focusLastArea() {
 }
 
 function hideMenu(event) {
-    // event.preventDefault();
     var showingMenu = $(".btn-group div.show").removeClass("show");
 }
 
@@ -640,40 +644,12 @@ function addTable() {
     }
 }
 
-// function addOneRow(id, isPointer) {
-//     var tr = $("<tr>", {id: "tr" + addingZero(id)});
-//     var columnArray = [addingZero(id), arrayBrainFuck[id], toHex(arrayBrainFuck[id]), isPointer];
-//     for (var i = 0; i < columnArray.length; i++) {
-//         tr.append(addOneColumn(i, columnArray[i]));
-//     }
-//     $("#debugging tbody").eq(0).append(tr);
-// }
-
-// function addOneColumn(index, value) {
-//     var input = createInput(index, value);
-//     if(index == 1) input.addClass("onDex");
-//     if(index == 2) input.addClass("onHex");
-//     if(index == 3) input.addClass("pointer");
-//     return $("<td>", {}).append(input);
-// }
-
-// function createInput(index, value) {
-//     return $("<input>", {
-//         disabled: (index == 0 ? true : false),
-//         type : (index == 3) ? "submit" : "text",
-//         value : value,
-//         class : "form-control",
-//     });
-// }
 
 function addOneRow(id, isPointer) {
     var tr = $("<tr>", {id: "tr" + addingZero(id)});
-    // var columnArray = [addingZero(id), arrayBrainFuck[id], toHex(arrayBrainFuck[id]), isPointer];
-    // for (var i = 0; i < columnArray.length; i++) {
-        tr.append( addIndexColumn(addingZero(id)) );
-        tr = addOneColumn(id, tr);
-        tr.append(addTextColumn(id));
-    // }
+    tr.append( addIndexColumn(addingZero(id)) );
+    tr = addOneColumn(id, tr);
+    tr.append(addTextColumn(id));
     $("#debugging tbody").eq(0).append(tr);
 }
 
@@ -723,7 +699,7 @@ function createInput(index, value) {
 
 function toHex(number) {
     var hexString = Number(number).toString(16).toUpperCase(), zero = "";
-    for (var i = 0; i < 3-hexString.length; i++) {
+    for (var i = 0; i < BITS-hexString.length; i++) {
         zero += "0";
     }
     return zero + hexString;
@@ -735,11 +711,7 @@ function addInputEvents() {
         dex.eq(i).on("keydown", onDexKeyDown);
         hex.eq(i).on("keydown", onHexKeyDown);
         text.eq(i).on("keyup", onTextKeUp);
-        // text.eq(i).on("keydown", onTextKeyDown);
-        // text.eq(i).on("paste", onTextPaste);
         text.eq(i).on("focusout", onTextFocusout);
-        // dex.eq(i).on("focusout", onDexFocusout);
-        // hex.eq(i).on("focusout", onHexFocusout);
         pointer.eq(i).on("click", onPointerClick);
     }
 }
@@ -754,16 +726,6 @@ function onHexKeyDown(event) {
     return false;
 }  
 
-// function onTextPaste(event) {
-//     // if($(this).val().length + event.originalEvent.clipboardData.getData('text').length > 10) return false;
-// }
-
-// function onTextKeyDown(event) {
-//     // alert(event.which);
-//     var goodCharCodes = [8, 17, 46, 37, 38, 39, 40];
-//     // if($(this).val().length >= 10 && (goodCharCodes.indexOf(event.which) == -1) && !event.ctrlKey) return false;
-
-// } 
 
 function onTextFocusout(event) {
     var currentValue = $(this).val();
@@ -866,9 +828,7 @@ function changeText(parent, changedSimbolCode, startId, id,) {
 
 function enterSuccess() {
     var userData = checkData($("#enter-data").val());
-    if(userData === null){
-        $("#error-in-data").text("Введите корректные данные!");
-    } else {
+    if(userData !== null){
         enterCansel();
         arrayBrainFuck[pointerBrainFuck] = userData;
         if(isOneStap) stopRunning();
@@ -887,7 +847,7 @@ function onDexFocusout (event) {
 
 function onHexFocusout (event) {
     var correctValue = $(this).val();
-    for (var i = 0; i < 3-$(this).val().length; i++) {
+    for (var i = 0; i < BITS-$(this).val().length; i++) {
         correctValue = "0" + correctValue;
     }
     addDefaultValue(this, Number.parseInt(correctValue, 16)); 
@@ -908,8 +868,8 @@ function addDefaultValue(thisElement, defaultValue) {
 
 function enterCansel() {
     $("#enterData").modal("hide");
-    $("#enter-data").val("");
-    $("#error-in-data").text("");
+    $("#enter-data").val("48");
+    $("#enter-data-simbol").val("0");
 }
 
 function toggleElement(element, isShow) {
@@ -948,13 +908,10 @@ function clearOutputButton() {
 function checkData(string) {
     if(isInt(string)){ 
         var integerAnswer = Number.parseInt(string);
-        if(integerAnswer >= 0 && integerAnswer <= 9){
-            return string.charCodeAt().toString();
-        } else {
-            return integerAnswer < 0 || integerAnswer > 65535 ? null : integerAnswer;
-        }
+        return integerAnswer < 0 || integerAnswer > TWELVE_BIT_RESTRICTION ? null : integerAnswer;
+
     } else {
-        return string.length != 1 ? (string.length == 0 ? 0 : null) : string.charCodeAt().toString();
+        return null;
     }
 }
 
@@ -1010,4 +967,73 @@ function addingZero(number) {
         answer = "0" + answer;
     }
     return answer;
+}
+
+function enterDataCode(event) {
+    var newValue = String.fromCharCode(event.which);
+    if(newValue >= 0 && newValue <= 9) {
+        var position = getCaret($(this)[0]);
+        var newText = $(this).val().substring(0, position) + newValue + $(this).val().substring(position);
+        if(newText <= TWELVE_BIT_RESTRICTION){
+            $(this).parent().children("#enter-data-simbol").val(String.fromCharCode(newText));
+            return true;
+        }
+    }
+    return [8, 46, 37, 38, 39, 40].indexOf(event.which) != -1 || event.ctrlKey ? true : false;   
+}
+
+function getCaret(el) { 
+  if (el.selectionStart) { 
+    return el.selectionStart; 
+  } else if (document.selection) { 
+    el.focus(); 
+
+    var r = document.selection.createRange(); 
+    if (r == null) { 
+      return 0; 
+    } 
+
+    var re = el.createTextRange(), rc = re.duplicate(); 
+    re.moveToBookmark(r.getBookmark()); 
+    rc.setEndPoint('EndToStart', re); 
+    return rc.text.length; 
+  }  
+  return 0; 
+}
+
+function enterDataSimbol(event) {
+    if([37, 38, 39, 40].indexOf(event.which) == -1 && !event.ctrlKey) {
+        $(this).val(String.fromCharCode(event.which));
+        $(this).parent().children("#enter-data").val(event.which);
+        return false;
+    } else return true; 
+}
+
+function pasteDataCode(event) {
+    var position = getCaret($(this)[0]);
+    var newValue = event.originalEvent.clipboardData.getData('text');
+    var newText = $(this).val();
+    newText = newText.substring(0, position) + newValue + newText.substring(position);
+
+    if(newText <= TWELVE_BIT_RESTRICTION){
+        $(this).parent().children("#enter-data-simbol").val(String.fromCharCode(newText));
+        return true;
+    }
+    return false;  
+}
+
+function pasteDataSimbol(event) {
+    var newSimbol = event.originalEvent.clipboardData.getData('text')[0];
+    $(this).val(newSimbol);
+    $(this).parent().children("#enter-data").val(newSimbol.charCodeAt().toString());
+    return false;
+}
+
+function focusoutDataCode(event) {
+    if($(this).val() == "") {
+        $(this).val(0);
+    } else {
+        $(this).val(Number($(this).val()));
+    }
+    $(this).parent().children("#enter-data-simbol").val(String.fromCharCode($(this).val()));
 }

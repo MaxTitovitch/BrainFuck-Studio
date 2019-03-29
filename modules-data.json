@@ -27,7 +27,7 @@
     "id": "enterData",
     "title": "Введите данные?",
     "needButtonClose" : false,
-    "body": "<p id='error-in-data' class='text-danger'></p><label for='enter-data'>Введите данные(символ, либо код):</label><input type='text' id='enter-data' class='form-control' placeholder='0'>", 
+    "body": "<label for='enter-data'>Введите данные(код):</label><input type='text' id='enter-data' class='form-control' value='48'></p><label for='enter-data-simbol'>Введите данные(символ):</label><input type='text' id='enter-data-simbol' class='form-control' value='0'>", 
     "footer" : "<button type='button' id='enter-success' class='btn btn-outline-simple'>Ввести</button><button type='button' id='enter-cansel' class='btn btn-outline-simple'>Выйти</button>"
   },
 
