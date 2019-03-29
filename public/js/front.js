@@ -24,7 +24,6 @@ var idBrainFuck, pointerBrainFuck, arrayBrainFuck, breakBrainFuck, commandsBrain
 //Регистрирование событий
 
 jQuery(function($) {
-
     for (var i = 0; i < ELEMENTS.length; i++) {
         addEvent(ELEMENTS[i], "mousedown" , EVENTS_CLICK[i]);
     }
@@ -36,16 +35,12 @@ function addEvent(element, event, callback) {
 }
 
 function addNotClickEvents() {
-    $("#work-space").on("keypress", closeBadSimbols);
-    $("#work-space").on("keydown", redirectTabPress);
-    $("#enter-data").on("keydown", enterDataCode);
-    $("#enter-data-simbol").on("keydown", enterDataSimbol);
-    $("#enter-data").on("paste", pasteDataCode);
-    $("#enter-data").on("focusout", focusoutDataCode);
-    $("#enter-data-simbol").on("paste", pasteDataSimbol);
-    $('#open-file-input').on("change", sendFileToServer);
-    $('.btn-group button').on("mouseover", viewAllMenu);
-    $('.btn-group button').on("mousedown", showMenu);
+    const SPECIAL_SELECTORS = ["#work-space", "#work-space", "#enter-data", "#enter-data-simbol", "#enter-data", "#enter-data", "#enter-data-simbol", '#open-file-input', '.btn-group button', '.btn-group button'];
+    const SPECIAL_EVENTS = ["keypress", "keydown", "keydown", "keydown", "paste", "focusout", "paste", "change", "mouseover", "mousedown"];
+    const SPECIAL_FUNCTIONS = [closeBadSimbols, redirectTabPress, enterDataCode, enterDataSimbol, pasteDataCode, focusoutDataCode, pasteDataSimbol, sendFileToServer, viewAllMenu, showMenu];
+    for (var i = 0; i < SPECIAL_EVENTS.length; i++) {
+        $(SPECIAL_SELECTORS[i]).on(SPECIAL_EVENTS[i], SPECIAL_FUNCTIONS[i]);
+    }
     document.getElementById('work-space').onpaste = onPaste;
 }
 
@@ -239,15 +234,13 @@ function isNeedRemove(keyKode, charCode, interval) {
 function shiftPosition(position, isRemove, isLeftShift, interval) {
     if(interval.length > 0){
         return isRemove ? interval.start-1 : interval.start;
-    }
-    if(isRemove ){
+    } else if(isRemove ) {
         if(isLeftShift){
             return position - 2;
         } else {
             return position - 1;
         }
-    }
-    return position ;
+    } else return position ;
 }
 
 function getSelectedRange(element) { 
@@ -267,14 +260,9 @@ function redirectTabPress(event) {
         for (var i = 0; i < 4; i++) {
             triggerEvent("keypress", "#work-space", 32) ;
         }
-    }
-    if(event.which == 8 ) {
+    } else if(event.which == 8 || event.which == 46) {
         event.preventDefault();
-        triggerEvent("keypress", "#work-space", 8);
-    }
-    if(event.which == 46) {
-        event.preventDefault();
-        triggerEvent("keypress", "#work-space", 46);
+        triggerEvent("keypress", "#work-space", event.which);
     }
 }
 
@@ -743,11 +731,16 @@ function onTextKeUp(event) {
     for (var i = id; i < id+10; i++) {
         var currentCode = currnetText.length > i-id ? currnetText[i-id].charCodeAt().toString() : 0;
         arrayBrainFuck[i] = currentCode;
-        $(this).parent().parent().children("#td" + i).eq(0).children().eq(0).val(currentCode);
-        $(this).parent().parent().children("#td" + i).eq(0).children().eq(1).val(toHex(currentCode));
+        addChangesInHex(this, i, currentCode);
     }
 
 }
+
+function addChangesInHex(thisElement, id, currentCode) {
+    $(thisElement).parent().parent().children("#td" + id).eq(0).children().eq(0).val(currentCode);
+    $(thisElement).parent().parent().children("#td" + id).eq(0).children().eq(1).val(toHex(currentCode));
+}
+
 
 function toTenZero(text) {
     var zero = ""
@@ -792,9 +785,6 @@ function changeIfIsInt(isSomethingInt, thisElement, numberSystem, position, valu
         position = checkPosition(event.which, position);
     }
     var newValue = $(thisElement).val().insertAt(position, value); 
-    if(numberSystem == 16) {
-        newValue.substring(-1); 
-    }
     startCheckValues(thisElement, numberSystem,  position + 1, newValue)
 }
 
@@ -913,7 +903,6 @@ function checkData(string) {
     if(isInt(string)){ 
         var integerAnswer = Number.parseInt(string);
         return integerAnswer < 0 || integerAnswer > TWELVE_BIT_RESTRICTION ? null : integerAnswer;
-
     } else {
         return null;
     }
@@ -1018,7 +1007,6 @@ function pasteDataCode(event) {
     var newValue = event.originalEvent.clipboardData.getData('text');
     var newText = $(this).val();
     newText = newText.substring(0, position) + newValue + newText.substring(position);
-
     if(newText <= TWELVE_BIT_RESTRICTION){
         $(this).parent().children("#enter-data-simbol").val(String.fromCharCode(newText));
         return true;
@@ -1120,11 +1108,6 @@ function enableButtons(isRemove) {
             $(arrayId[i]).attr("disabled", true);
         }
     }
-    // $("div #save-server-file").removeClass("disabled");
-    // $("div #delete-server-file").removeClass("disabled");
-    // $("div #open-server-file").removeAttr("disabled");
-    // $("div #save-server-file").removeAttr("disabled");
-    // $("div #delete-server-file").removeAttr("disabled");
 }
 
 function onExit(event) {
