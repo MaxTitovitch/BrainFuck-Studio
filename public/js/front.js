@@ -14,9 +14,8 @@ const DATA_COLORING_ARRAY = [
 const ELEMENTS = ["div #create-file", "div #save-create", "div #open-file", "#rename-file", "div #save-file","#close-file", "#save-last-file", "#close-last-file", "div #run-button", "div #run-debug-button", "div #run-onebug-button", "#enter-success", "#enter-cansel", "#debug-success", "#onebug-success", "#debug-cansel", "div div #output-show-button", "div #output-close-button", "div #output-clear-button", "div #about-button", "#ok-alert", "body"];
 const EVENTS_CLICK = [create, saveCreation, open, rename, save, close, saveLastFile, closeLastFile, runInterpretation, runDebug, runOneBug, enterSuccess, enterCansel, debugSuccess, oneBugSuccess, degusCansel, showOutputButton, closeOutputButton, clearOutputButton, sendAbout, onOkAlert, hideMenu];
 
-const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"], DEFAULT_FILE_NAME = "new.bf", SIXTEEN_BIT_RESTRICTION = 65535, CELLS_QUANTITY = 300;
-const FUNCTIONS = [incrementPointer, decrementPointer, incrementValue, decrementValue, outputValue, inputValue,
-    debugData, startCycle, endCycle];
+const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"], DEFAULT_FILE_NAME = "new.bf", TWELVE_BIT_RESTRICTION = 4095, CELLS_QUANTITY = 300;
+const FUNCTIONS = [incrementPointer, decrementPointer, incrementValue, decrementValue, outputValue, inputValue, debugData, startCycle, endCycle];
 
 var fileName = DEFAULT_FILE_NAME, lastFileName = DEFAULT_FILE_NAME, isClear, lastFunction;
 var idBrainFuck, pointerBrainFuck, arrayBrainFuck, breakBrainFuck, commandsBrainFuck, isDebug, isOneStap;
@@ -315,13 +314,17 @@ function choseInsertSimbol(eventWhick, position, isRemove, interval) {
 
 function checkClearing(interval, selector, newValue) {
     if(interval.end != interval.start){
-        var htmlText = replaceSpecialSimbols($(selector).html());
-        htmlText = $(selector).html(htmlText);
-        htmlText = $(selector).text();
-        var result = htmlText.slice(0, interval.start) + newValue + htmlText.slice(interval.end);
-        $(selector).html(result);
+        updateText(interval, selector, newValue);
     }
     return interval.start;
+}
+
+function updateText(interval, selector, newValue) {
+    var htmlText = replaceSpecialSimbols($(selector).html());
+    htmlText = $(selector).html(htmlText);
+    htmlText = $(selector).text();
+    var result = htmlText.slice(0, interval.start) + newValue + htmlText.slice(interval.end);
+    $(selector).html(result);
 }
 
 
@@ -437,17 +440,11 @@ function replaceOuterData(text) {
 }
 
 function onPaste(event) {
-    position = getCursorPosition("#work-space");
     var interval = getSelectedRange(document.getElementById('work-space'));
     var paste = (event.clipboardData || window.clipboardData).getData('text');
     paste = replaceOuterData(paste.deleteOnnecessary("><+-.,[]!"));
-
-    if(interval.length == 0) {
-        $("#work-space").html(prepareInjectText($("#work-space").text(), paste, interval.start));
-    } else {
-        checkClearing(interval, "#work-space", paste + "");
-        createBackLite(true);
-    }
+    updateText(interval, "#work-space", paste + "");
+    createBackLite(true);
     moveCursor("work-space",  paste.length-1 + interval.start); 
     return false;
 }
@@ -527,7 +524,7 @@ function parse(){
                     printOutput(answer + "\n");
                     return "";
                 } 
-                if(i == 5 && isOneStap || (i == 6 && isDebug && !isOneStap)) return "";
+                if(i == 5 || (i == 6 && isDebug && !isOneStap)) return "";
                 if(isOneStap && i != 6) {
                     stopRunning();
                     return "";
@@ -557,10 +554,10 @@ function decrementPointer() {
 }
 
 function incrementValue() {
-    if(arrayBrainFuck[pointerBrainFuck] + 1 < SIXTEEN_BIT_RESTRICTION) {
+    if(arrayBrainFuck[pointerBrainFuck] + 1 < TWELVE_BIT_RESTRICTION) {
         arrayBrainFuck[pointerBrainFuck]++;
         return "";
-    } else return "Ошибка! значение вышло за лимит " + SIXTEEN_BIT_RESTRICTION + " !";
+    } else return "Ошибка! значение вышло за лимит " + TWELVE_BIT_RESTRICTION + " !";
 }
 
 function decrementValue() {
@@ -636,40 +633,89 @@ function stopRunning() {
 }
 
 function addTable() {
-    for (var i = 0; i < arrayBrainFuck.length; i++) {
-        // if(i == pointerBrainFuck ){
-        //     addOneRow(i, "<==");
-        // } else if(arrayBrainFuck[i] != 0){
-        //     addOneRow(i, "");
-        // }
-        
+    for (var i = 0; i < arrayBrainFuck.length; i+=10) {
         var pointer = i != pointerBrainFuck ? "" : "<==";
         addOneRow(i, pointer);
 
     }
 }
 
+// function addOneRow(id, isPointer) {
+//     var tr = $("<tr>", {id: "tr" + addingZero(id)});
+//     var columnArray = [addingZero(id), arrayBrainFuck[id], toHex(arrayBrainFuck[id]), isPointer];
+//     for (var i = 0; i < columnArray.length; i++) {
+//         tr.append(addOneColumn(i, columnArray[i]));
+//     }
+//     $("#debugging tbody").eq(0).append(tr);
+// }
+
+// function addOneColumn(index, value) {
+//     var input = createInput(index, value);
+//     if(index == 1) input.addClass("onDex");
+//     if(index == 2) input.addClass("onHex");
+//     if(index == 3) input.addClass("pointer");
+//     return $("<td>", {}).append(input);
+// }
+
+// function createInput(index, value) {
+//     return $("<input>", {
+//         disabled: (index == 0 ? true : false),
+//         type : (index == 3) ? "submit" : "text",
+//         value : value,
+//         class : "form-control",
+//     });
+// }
+
 function addOneRow(id, isPointer) {
-    var tr = $("<tr>", {id: "tr" + id});
-    var columnArray = [id, arrayBrainFuck[id], toHex(arrayBrainFuck[id]), isPointer];
-    for (var i = 0; i < columnArray.length; i++) {
-        tr.append(addOneColumn(i, columnArray[i]));
-    }
+    var tr = $("<tr>", {id: "tr" + addingZero(id)});
+    // var columnArray = [addingZero(id), arrayBrainFuck[id], toHex(arrayBrainFuck[id]), isPointer];
+    // for (var i = 0; i < columnArray.length; i++) {
+        tr.append( addIndexColumn(addingZero(id)) );
+        tr = addOneColumn(id, tr);
+        tr.append(addTextColumn(id));
+    // }
     $("#debugging tbody").eq(0).append(tr);
 }
 
-function addOneColumn(index, value) {
-    var input = createInput(index, value);
-    if(index == 1) input.addClass("onDex");
-    if(index == 2) input.addClass("onHex");
-    if(index == 3) input.addClass("pointer");
+function addIndexColumn(value) {
+    var input = createInput(0, value);
     return $("<td>", {}).append(input);
+}
+
+function addTextColumn(id) {
+    var value = "";
+    for (var i = id; i < id+10; i++) {
+        value += String.fromCharCode(arrayBrainFuck[i]);
+    }
+    var input = createInput(1, value);
+    input.addClass ("onText");
+    return $("<td>", {}).append(input);
+}
+
+function addOneColumn(id, tr) {
+    for (var i = id; i < id+10; i++) {
+        var currentColumn = $("<td>", {id: "td" + (i - id)});
+
+        var dex = arrayBrainFuck[i];
+        var inputDex = createInput(1, dex);
+        inputDex.addClass("onDex");
+
+        var hex = toHex(arrayBrainFuck[i]);
+        var inputHex = createInput(1, hex);
+        inputHex.addClass("onHex"); 
+
+
+        currentColumn.append(inputDex);
+        currentColumn.append(inputHex);
+        tr.append(currentColumn);
+    }
+    return tr;
 }
 
 function createInput(index, value) {
     return $("<input>", {
         disabled: (index == 0 ? true : false),
-        type : (index == 3) ? "submit" : "text",
+        type : "text",
         value : value,
         class : "form-control",
     });
@@ -677,19 +723,23 @@ function createInput(index, value) {
 
 function toHex(number) {
     var hexString = Number(number).toString(16).toUpperCase(), zero = "";
-    for (var i = 0; i < 4-hexString.length; i++) {
+    for (var i = 0; i < 3-hexString.length; i++) {
         zero += "0";
     }
     return zero + hexString;
 }
 
 function addInputEvents() {
-    var dex = $(".onDex"), hex = $(".onHex"), pointer = $(".pointer");
+    var dex = $(".onDex"), hex = $(".onHex"), text = $(".onText"), pointer = $(".pointer");
     for (var i = 0; i < dex.length; i++) {
         dex.eq(i).on("keydown", onDexKeyDown);
         hex.eq(i).on("keydown", onHexKeyDown);
-        dex.eq(i).on("focusout", onDexFocusout);
-        hex.eq(i).on("focusout", onHexFocusout);
+        text.eq(i).on("keyup", onTextKeUp);
+        // text.eq(i).on("keydown", onTextKeyDown);
+        // text.eq(i).on("paste", onTextPaste);
+        text.eq(i).on("focusout", onTextFocusout);
+        // dex.eq(i).on("focusout", onDexFocusout);
+        // hex.eq(i).on("focusout", onHexFocusout);
         pointer.eq(i).on("click", onPointerClick);
     }
 }
@@ -702,7 +752,44 @@ function onDexKeyDown(event){
 function onHexKeyDown(event) {
     onIntKeyDown(this,event, isHexInt, 16);
     return false;
-}   
+}  
+
+// function onTextPaste(event) {
+//     // if($(this).val().length + event.originalEvent.clipboardData.getData('text').length > 10) return false;
+// }
+
+// function onTextKeyDown(event) {
+//     // alert(event.which);
+//     var goodCharCodes = [8, 17, 46, 37, 38, 39, 40];
+//     // if($(this).val().length >= 10 && (goodCharCodes.indexOf(event.which) == -1) && !event.ctrlKey) return false;
+
+// } 
+
+function onTextFocusout(event) {
+    var currentValue = $(this).val();
+    currentValue = currentValue.substring(0, 10);
+    $(this).val(toTenZero(currentValue));
+}
+
+function onTextKeUp(event) {
+    var currnetText = $(this).val();
+    var id =  Number($(this).parent().parent().attr("id").replace("tr", ""));
+    for (var i = id; i < id+10; i++) {
+        var currentCode = currnetText.length > i-id ? currnetText[i-id].charCodeAt().toString() : 0;
+        arrayBrainFuck[i] = currentCode;
+        $(this).parent().parent().children("#td" + i).eq(0).children().eq(0).val(currentCode);
+        $(this).parent().parent().children("#td" + i).eq(0).children().eq(1).val(toHex(currentCode));
+    }
+
+}
+
+function toTenZero(text) {
+    var zero = ""
+    for (var i = 0; i < 10-text.length; i++) {
+        zero += String.fromCharCode(0);
+    }
+    return zero + text;
+}
 
 function onIntKeyDown(thisElement, event, isSomethingInt, numberSystem) {
     var value = String.fromCharCode(event.which);
@@ -758,13 +845,23 @@ function startCheckValues(thisElement, numberSystem, position,  newValue) {
 }
 
 function checkCurrentValue(thisElement, newValue) {
-    if(newValue >= 0 && newValue <= SIXTEEN_BIT_RESTRICTION) {
+    if(newValue >= 0 && newValue <= TWELVE_BIT_RESTRICTION) {
         var parent = $(thisElement).parent().parent();
-        var id = parent.attr("id").replace("tr", "");
-        arrayBrainFuck[id] = newValue;
-        parent.children().eq(1).children().eq(0).val(newValue);
-        parent.children().eq(2).children().eq(0).val(toHex(newValue));
+        var id = Number(parent.attr("id").replace("tr", ""));
+        var currentId = $(thisElement).parent().attr("id").replace("td", "");//.id()
+        arrayBrainFuck[id + Number(currentId)] = newValue;
+        parent.children("#td" + currentId).eq(0).children().eq(0).val(newValue);
+        parent.children("#td" + currentId).eq(0).children().eq(1).val(toHex(newValue));
+        changeText(parent, newValue, id, Number(currentId));
     } 
+}
+
+function changeText(parent, changedSimbolCode, startId, id,) {
+    var text = "";
+    for (var i = startId; i < startId+10; i++) {
+        text += String.fromCharCode(arrayBrainFuck[i]);
+    }
+    parent.children().eq(-1).children(".onText").val(text);
 }
 
 function enterSuccess() {
@@ -790,7 +887,7 @@ function onDexFocusout (event) {
 
 function onHexFocusout (event) {
     var correctValue = $(this).val();
-    for (var i = 0; i < 4-$(this).val().length; i++) {
+    for (var i = 0; i < 3-$(this).val().length; i++) {
         correctValue = "0" + correctValue;
     }
     addDefaultValue(this, Number.parseInt(correctValue, 16)); 
@@ -905,4 +1002,12 @@ function runAlert(text) {
 
 function onOkAlert(argument) {
     $("#alertModal").modal('hide');
+}
+
+function addingZero(number) {
+    var answer = Number(number).toString();
+    while (answer.length < 4) {
+        answer = "0" + answer;
+    }
+    return answer;
 }

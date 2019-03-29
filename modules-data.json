@@ -35,7 +35,7 @@
     "id": "current-debug",
     "title": "Отладка!",
     "needButtonClose" : false,
-    "body": "<div class='containerr'><table border='1' class='table' id='debugging'><thead class='thead-dark'><tr id='non-del'><th scope='col'>Address</th><th scope='col'>DEX</th><th scope='col'>HEX</th><th scope='col'>Pointer</th></tr></thead><tbody></tbody></table></div>", 
+    "body": "<div class='containerr'><table border='1' class='table' id='debugging'><thead class='thead-dark'><tr id='non-del'><th scope='col'>Address</th><th scope='col'>00</th><th scope='col'>01</th><th scope='col'>02</th><th scope='col'>03</th><th scope='col'>04</th><th scope='col'>05</th><th scope='col'>06</th><th scope='col'>07</th><th scope='col'>08</th><th scope='col'>09</th><th scope='col'>Text</th></tr></thead><tbody></tbody></table></div>", 
     "footer" : "<button type='button' id='debug-success' class='btn btn-outline-simple'>Продолжить</button><button type='button' id='onebug-success' class='btn btn-outline-simple'>Один Шаг</button><button type='button' id='debug-cansel' class='btn btn-outline-simple'>Выйти</button>"
   }
 ]

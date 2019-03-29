@@ -230,11 +230,23 @@ table {
     box-shadow: 0px 0px 15px rgba(230,230,230, 0.5), inset 0px 0px 10px rgba(230,230,230,0.5); 
 }
 
-
-
-
 .left-button {
 	width: 38px !important;
 	padding: auto !important;
 	text-align: center !important;
+}
+
+#current-debug .modal-dialog {
+	max-width: 90% !important;
+	max-height: 200px !important;
+	height: 200px !important;
+}
+
+#current-debug .modal-body {
+	overflow: scroll;
+	height: 50vh;
+}
+
+.onText {
+	width: 12vw !important;
 }
