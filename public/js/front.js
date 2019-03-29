@@ -11,7 +11,7 @@ const DATA_COLORING_ARRAY = [
     ["[", "<code class='success'>[</code>"],
     ["]", "<code class='success'>]</code>"]
 ];
-const ELEMENTS = ["div #create-file", "div #save-create", "div #open-file", "#rename-file", "div #save-file","#close-file", "#save-last-file", "#close-last-file", "div #run-button", "div #run-debug-button", "div #run-onebug-button", "#enter-success", "#enter-cansel", "#debug-success", "#onebug-success", "#debug-cansel", "div div #output-show-button", "div #output-close-button", "div #output-clear-button", "div #about-button", "#ok-alert", "body", "#entrance", "#registration", "#entrance-success", "#registration-success", "#exit", "div #save-server-file", "div #open-server-file", "div #delete-server-file", "#ok-file"];
+const ELEMENTS = ["div #create-file", "div #save-create", "div #open-file", "#rename-file", "div #save-file","#close-file", "#save-last-file", "#close-last-file", "div #run-button", "div #run-debug-button", "div #run-onebug-button", "#enter-success", "#enter-cansel", "#debug-success", "#onebug-success", "#debug-cansel", "div #output-show-button", "div #output-close-button", "div #output-clear-button", "div #about-button", "#ok-alert", "body", "#entrance", "#registration", "#entrance-success", "#registration-success", "#exit", "div #save-server-file", "div #open-server-file", "div #delete-server-file", "#ok-file"];
 const EVENTS_CLICK = [create, saveCreation, open, rename, save, close, saveLastFile, closeLastFile, runInterpretation, runDebug, runOneBug, enterSuccess, enterCansel, debugSuccess, oneBugSuccess, degusCansel, showOutputButton, closeOutputButton, clearOutputButton, sendAbout, onOkAlert, hideMenu, onEntrance, onRegistration, entranceSuccess, registrationSuccess, onExit, onServerSave, openServerFile, deleteServerFile, onFileChose];
 
 const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"], DEFAULT_FILE_NAME = "new.bf", BITS = 3, TWELVE_BIT_RESTRICTION = 4095, CELLS_QUANTITY = 300;
@@ -663,21 +663,17 @@ function addTextColumn(id) {
 function addOneColumn(id, tr) {
     for (var i = id; i < id+10; i++) {
         var currentColumn = $("<td>", {id: "td" + (i - id)});
-
-        var dex = arrayBrainFuck[i];
-        var inputDex = createInput(1, dex);
-        inputDex.addClass("onDex");
-
-        var hex = toHex(arrayBrainFuck[i]);
-        var inputHex = createInput(1, hex);
-        inputHex.addClass("onHex"); 
-
-
-        currentColumn.append(inputDex);
-        currentColumn.append(inputHex);
+        currentColumn.append(createNumberInput("onDex", arrayBrainFuck[i]));
+        currentColumn.append(createNumberInput("onHex", toHex(arrayBrainFuck[i])));
         tr.append(currentColumn);
     }
     return tr;
+}
+
+function createNumberInput(thisClass, value) {
+    var inputDex = createInput(1, value);
+    inputDex.addClass(thisClass);
+    return inputDex;
 }
 
 function createInput(index, value) {
@@ -806,10 +802,14 @@ function checkCurrentValue(thisElement, newValue) {
         var id = Number(parent.attr("id").replace("tr", ""));
         var currentId = $(thisElement).parent().attr("id").replace("td", "");//.id()
         arrayBrainFuck[id + Number(currentId)] = newValue;
-        parent.children("#td" + currentId).eq(0).children().eq(0).val(newValue);
-        parent.children("#td" + currentId).eq(0).children().eq(1).val(toHex(newValue));
-        changeText(parent, newValue, id, Number(currentId));
+        addChanged(parent, currentId, newValue, id);
     } 
+}
+
+function addChanged(parent, currentId, newValue, id) {
+    parent.children("#td" + currentId).eq(0).children().eq(0).val(newValue);
+    parent.children("#td" + currentId).eq(0).children().eq(1).val(toHex(newValue));
+    changeText(parent, newValue, id, Number(currentId));
 }
 
 function changeText(parent, changedSimbolCode, startId, id,) {
@@ -866,8 +866,8 @@ function enterCansel() {
     $("#enter-data-simbol").val("0");
 }
 
-function toggleElement(element, isShow) {
-    if(isShow) {
+function toggleElement(element, isClose) {
+    if(isClose) {
         $(element).attr("disabled", true);
         $(element).addClass("disabled");
     } else {
@@ -879,7 +879,7 @@ function toggleElement(element, isShow) {
 function managementOutputMenu(isShow) {
     toggleElement("div #output-show-button", isShow);
     toggleElement("div #output-close-button", !isShow);
-    toggleElement("div #output-clear-button", !isShow);
+    // toggleElement("div #output-clear-button", !isShow);
 }
 
 function showOutputButton() {
@@ -965,8 +965,7 @@ function addingZero(number) {
 function enterDataCode(event) {
     var newValue = String.fromCharCode(event.which);
     if(newValue >= 0 && newValue <= 9) {
-        var position = getCaret($(this)[0]);
-        var newText = $(this).val().substring(0, position) + newValue + $(this).val().substring(position);
+        var newText = $(this).val().substring(0, getCaret($(this)[0])) + newValue + $(this).val().substring(getCaret($(this)[0]));
         if(newText <= TWELVE_BIT_RESTRICTION){
             $(this).parent().children("#enter-data-simbol").val(String.fromCharCode(newText));
             return true;
@@ -975,23 +974,19 @@ function enterDataCode(event) {
     return [8, 46, 37, 38, 39, 40].indexOf(event.which) != -1 || event.ctrlKey ? true : false;   
 }
 
-function getCaret(el) { 
-  if (el.selectionStart) { 
-    return el.selectionStart; 
-  } else if (document.selection) { 
-    el.focus(); 
-
-    var r = document.selection.createRange(); 
-    if (r == null) { 
-      return 0; 
-    } 
-
-    var re = el.createTextRange(), rc = re.duplicate(); 
-    re.moveToBookmark(r.getBookmark()); 
-    rc.setEndPoint('EndToStart', re); 
-    return rc.text.length; 
-  }  
-  return 0; 
+function getCaret(inputElement) { 
+    if (inputElement.selectionStart) { 
+        return inputElement.selectionStart; 
+    } else if (document.selection) { 
+        inputElement.focus(); 
+        var thisRange = document.selection.createRange(); 
+        if (thisRange == null) return 0; 
+        var newRange = inputElement.createTextRange(), douplicateRange = newRange.duplicate(); 
+        newRange.moveToBookmark(thisRange.getBookmark()); 
+        douplicateRange.setEndPoint('EndToStart', newRange); 
+        return douplicateRange.text.length; 
+    }  
+    return 0; 
 }
 
 function enterDataSimbol(event) {
@@ -1046,21 +1041,10 @@ function entranceSuccess(data){
     var mail = $("#entrance-mail").val();
     var password = $("#entrance-password").val();
     if(password.length >= 5 && isEmail(mail)){
-        createEntranceAjax("/get", "mail=" + mail + "&password=" + password, onEntranceAjax);
+        addAjaxQuery("/get", "mail=" + mail + "&password=" + password, onEntranceAjax);
     } else {
         $("#entrance-error").text("Некорректные почта и\\или пароль!");
     }
-}
-
-function createEntranceAjax(path, data, funSucces) {
-    $.ajax({
-        url: path,
-        method: "get",
-        contentType: false, 
-        processData: false,
-        data: data,
-        success: funSucces
-    });
 }
 
 function onEntranceAjax(data) {
@@ -1069,11 +1053,9 @@ function onEntranceAjax(data) {
 
 function registrationSuccess(data){
     $("#registratuion-error").text("");
-    var mail = $("#registration-mail").val();
-    var login = $("#registration-login").val();
-    var password = $("#registration-password").val();
+    var mail = $("#registration-mail").val(), login = $("#registration-login").val(), password = $("#registration-password").val();
     if(password.length >= 5 && login.length >= 5 && isEmail(mail)){
-        createEntranceAjax("/add", "mail=" + mail + "&password=" + password + "&login=" + login, onRegistrationAjax);
+        addAjaxQuery("/add", "mail=" + mail + "&password=" + password + "&login=" + login, onRegistrationAjax);
     } else {
         $("#registration-error").text("Некорректные почта и\\или пароль!");
     }
@@ -1115,42 +1097,20 @@ function onExit(event) {
     $(".auth").css({display: "none"});
     $(".auth button").text("<Пользователь>");
     enableButtons(false);
-    $.ajax({
-        url: "/close",
-        method: "get",
-        contentType: false, 
-        processData: false,
-        data: ""
-    });
+    addAjaxQuery("/close", "", function(){});
 }
 
+
 function onServerSave(event) {
-    $.ajax({
-        url: "/save",
-        method: "get",
-        contentType: false, 
-        processData: false,
-        data: "name=" + fileName + "&data=" +  $("#work-space").text()
-    });
+    addAjaxQuery("/save", "name=" + fileName + "&data=" +  $("#work-space").text(), function(){});
 }
 
 function openServerFile(event) {   
-    getFileAjax(showFileListOpen);
+    addAjaxQuery("/filelist", "", showFileListOpen);
 }
 
 function deleteServerFile(event) {  
-    getFileAjax(showFileListDelete);
-}
-
-function getFileAjax(functionGet) {
-    $.ajax({
-        url: "/filelist",
-        method: "get",
-        contentType: false, 
-        processData: false,
-        data: "",
-        success: functionGet
-    });
+    addAjaxQuery("/filelist", "", showFileListDelete);
 }
 
 function showFileListOpen(data) {
@@ -1177,23 +1137,12 @@ function onFileChose(event) {
     var selectedName = $("#file-select :selected").text();
     if(selectedName != "") {
         if($(this).text() == "Открыть") {
-            createAjaxChange(selectedName, "/openfile", onOpenServerFile);
+            addAjaxQuery("/openfile", "name=" + selectedName, onOpenServerFile);
         } else {
-            createAjaxChange(selectedName, "/removefile", function () {});
+            addAjaxQuery("/removefile", "name=" + selectedName, function () {});
         }
     }
     $("#showFileLish").modal("hide");
-}
-
-function createAjaxChange(name, path, functionSuccess) {
-    $.ajax({
-        url: path,
-        method: "get",
-        contentType: false, 
-        processData: false,
-        data: "name=" + name,
-        success: functionSuccess
-    });
 }
 
 function onOpenServerFile(data) {
@@ -1204,4 +1153,15 @@ function onOpenServerFile(data) {
 
 function replaceChars(text) {
     return text.replaceAllFrom("<", "&lt;").replaceAllFrom(">", "&gt;");
+}
+
+function addAjaxQuery(path, data, functionSuccess) {
+    $.ajax({
+        url: path,
+        method: "get",
+        contentType: false, 
+        processData: false,
+        data: data,
+        success: functionSuccess
+    });
 }

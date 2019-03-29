@@ -71,6 +71,21 @@ table {
     font-size: 20px;
 }
 
+#table-responsive {
+	margin: auto 0;
+	padding: auto;
+}
+
+#current-debug .modal-dialog {
+	max-width: 90% !important;
+	max-height: 200px !important;
+	height: 200px !important;
+}
+
+#current-debug .modal-body {
+	overflow: scroll;
+	height: 50vh;
+}
 
 .disabled:hover {
 	color: black !important;
@@ -89,10 +104,6 @@ table {
 	border-radius: 10px;
 	font-family: 'Germania One', cursive;
 }
-/*
-#file-name {
-	float: left;
-}*/
 
 .btn {
 	color: #e0dbdb;
@@ -202,11 +213,6 @@ table {
 	color: #7d7f7d;
 }
 
-#table-responsive {
-	margin: auto 0;
-	padding: auto;
-}
-
 .output {
 	top: 72%;
     position: absolute;
@@ -240,17 +246,6 @@ table {
 	text-align: center !important;
 }
 
-#current-debug .modal-dialog {
-	max-width: 90% !important;
-	max-height: 200px !important;
-	height: 200px !important;
-}
-
-#current-debug .modal-body {
-	overflow: scroll;
-	height: 50vh;
-}
-
 .onText {
 	width: 12vw !important;
 }
@@ -259,7 +254,3 @@ table {
 	float: right;
 	margin-right: 1vw;
 }
-
-/*.auth {
-	display: none;
-}*/

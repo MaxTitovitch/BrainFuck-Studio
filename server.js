@@ -14,6 +14,7 @@ app.post("/readFile", upload.single('this-file'), function (req, res) {
     res.send(req.file.buffer + "");
 });
 
+
 app.get("/add", function (req, res) {
     var newUser = { mail: req.query.mail, login: req.query.login, password: req.query.password }
     db.collection("users").findOne({"mail": newUser.mail}, function (err, doc) {
@@ -28,6 +29,7 @@ app.get("/add", function (req, res) {
 
 });
 
+
 app.get("/all", function (req, res) {
     db.collection("users").find().toArray(function (err, doc) {
         if(doc != null) {
@@ -37,6 +39,7 @@ app.get("/all", function (req, res) {
         return res.send({answer: false});
     });
 });
+
 
 app.get("/remove", function (req, res) {
     db.collection("users").deleteOne({mail: req.query.mail}, function (err, doc) {
@@ -63,6 +66,7 @@ app.get("/close", function (req, res) {
     return res.send(currentUser);
 });
 
+
 app.get("/save", function (req, res) {
     var dir = __dirname + "\\userfiles\\" + currentUser.login;
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
@@ -70,11 +74,13 @@ app.get("/save", function (req, res) {
     return res.send(currentUser);
 });
 
+
 app.get("/removefile", function (req, res) {
     var file = __dirname + "\\userfiles\\" + currentUser.login + "\\" + req.query.name;
     if (fs.existsSync(file)) fs.unlink(file, function () {})
     return res.send(currentUser);
 });
+
 
 app.get("/openfile", function (req, res) {
     var file = __dirname + "\\userfiles\\" + currentUser.login + "\\" + req.query.name;
@@ -84,6 +90,7 @@ app.get("/openfile", function (req, res) {
     }
     return res.send({answer: false});
 });
+
 
 app.get("/filelist", function (req, res) {
     var dir = __dirname + "\\userfiles\\" + currentUser.login + "\\", arrayfiles=[];
@@ -104,6 +111,7 @@ app.use("/", function (req, res) {
     res.render("index", {items: items, user: currentUser, display: display});
 });
 
+
 app.use("/:some",function (req, res) {
   res.redirect("/");
 });
@@ -117,4 +125,3 @@ mongoClient.connect(function(err, client){
     db = client.db("bfitra");
     app.listen(3000);
 });
-

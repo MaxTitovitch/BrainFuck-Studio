@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="ru">
-
   <head>
+
     <!-- Стили -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/public/css/style.css">
@@ -19,8 +19,8 @@
     <meta charset="utf-8" />
     <title>BrainFuck Studio 2019 - new.bf</title>
     <link rel="shortcut icon" href="/public/brain.png" type="image/x-icon">
-  </head>
 
+  </head>
   <body>
 
     <header>
@@ -52,8 +52,8 @@
                   </div>
               </div>
             </div>
-            
           </h2>
+
           <div class="">
             <div class="main-menu">
               <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
@@ -112,7 +112,6 @@
               <input type="image" src="/public/images/show.png" class="image-button" id="output-show-button" /> 
               <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
 
-
               <input type="image" src="/public/images/run.png" class="image-button" id="run-button" />
               <input type="image" src="/public/images/debug.png" class="image-button" id="run-debug-button" />
               <input type="image" src="/public/images/onebug.png" class="image-button" id="run-onebug-button" /> 
@@ -120,8 +119,6 @@
 
               <input type="image" src="/public/images/help.png" class="image-button" id="about-button" /> 
               <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
-
-
             </div>
             <div>
               <form action="/readFile" id="my-form" method="post" enctype="multipart/form-data">
@@ -142,7 +139,7 @@
         <div class="main-space">
           <textarea id="output-space" class="form-control" onkeydown="return false"></textarea>
           <input id="output-close-button" type="image" src="/public/images/hide.png" class="image-button left-button" />
-          <input id="output-clear-button" type="image" src="/public/images/clear.png" class="image-button left-button disabled" disabled="true" /> 
+          <input id="output-clear-button" type="image" src="/public/images/clear.png" class="image-button left-button disabled" disabled="disabled" /> 
         </div>
       </div>
     </main>
@@ -153,5 +150,4 @@
 
 
   </body>
-
 </html>
