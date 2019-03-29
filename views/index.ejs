@@ -26,11 +26,35 @@
     <header>
       <div class="row">
         <div class="col-sm">
-          <h2 class="app-name">BrainFuck Studio 2019
+          <h2 class="app-name">
+            BrainFuck Studio 2019
             <small> - <abbr id="file-name" data-toggle="tooltip" data-placement="top" title="Имя файла">new.bf</abbr></small>
+
+            <div class="no-auth" style="display: <%= display.displayOn %>;">
+              <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                  <button type="button" class="btn btn-simple menu-btn" id="menu-file" >
+                    <Пользователь>
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="menu-file">
+                    <input id="entrance" class="btn btn-simple menu-btn second-menu" type="submit" value="Вход" />
+                    <input id="registration" class="btn btn-simple menu-btn second-menu" type="submit" value="Регистрация" />
+                  </div>
+              </div>
+            </div>
+            
+            <div class="auth" style="display: <%= display.displayOff %>;">
+              <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                  <button type="button" class="btn btn-simple menu-btn" id="menu-file" >
+                    <%= display.name %>
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="menu-file">
+                    <input id="exit" class="btn btn-simple menu-btn second-menu" type="submit" value="Вход" />
+                  </div>
+              </div>
+            </div>
+            
           </h2>
           <div class="">
-
             <div class="main-menu">
               <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
@@ -42,9 +66,9 @@
                     <input id="open-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Открыть" />
                     <input id="rename-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Переименовать" />
                     <input id="save-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Сохранить" />
-                    <input id="open-server-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Открыть (сервер)" />
-                    <input id="save-server-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Сохранить (сервер)" />
-                    <input id="delete-server-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Удалить (сервер)" />
+                    <input id="open-server-file" class="btn btn-simple menu-btn second-menu <%= display.dissClass %>" type="submit" value="Открыть (сервер)" <%= display.diss %> />
+                    <input id="save-server-file" class="btn btn-simple menu-btn second-menu <%= display.dissClass %>" type="submit" value="Сохранить (сервер)" <%= display.diss %> />
+                    <input id="delete-server-file" class="btn btn-simple menu-btn second-menu <%= display.dissClass %>" type="submit" value="Удалить (сервер)" <%= display.diss %> />
                     <input id="close-file" class="btn btn-simple menu-btn second-menu" type="submit" value="Закрыть" />
                   </div>
                 </div>
@@ -76,9 +100,9 @@
 
             <div class="main-menu">
               <input type="image" src="/public/images/create.png" class="image-button" id="create-file" />
-              <input type="image" src="/public/images/open.png" class="image-button" id="open-server-file" />
-              <input type="image" src="/public/images/save.png" class="image-button" id="save-server-file" />
-              <input type="image" src="/public/images/delete.png" class="image-button" id="delete-server-file" /> 
+              <input type="image" src="/public/images/open.png" class="image-button <%= display.dissClass %>" id="open-server-file" <%= display.diss %> />
+              <input type="image" src="/public/images/save.png" class="image-button <%= display.dissClass %>" id="save-server-file" <%= display.diss %> />
+              <input type="image" src="/public/images/delete.png" class="image-button <%= display.dissClass %>" id="delete-server-file" <%= display.diss %> /> 
               <input type="image" src="/public/images/line.png" class="image-button disabled" disabled="true" /> 
 
               <input type="image" src="/public/images/upload.png" class="image-button" id="open-file" />
@@ -112,7 +136,7 @@
 
     <main>
       <div class="main-space first-space">
-        <div id="work-space" class="form-control" contentEditable="true">,.</div>
+        <div id="work-space" class="form-control" contentEditable="true"></div>
       </div>
       <div class="output">
         <div class="main-space">

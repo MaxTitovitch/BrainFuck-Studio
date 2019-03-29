@@ -89,6 +89,10 @@ table {
 	border-radius: 10px;
 	font-family: 'Germania One', cursive;
 }
+/*
+#file-name {
+	float: left;
+}*/
 
 .btn {
 	color: #e0dbdb;
@@ -250,3 +254,12 @@ table {
 .onText {
 	width: 12vw !important;
 }
+
+.no-auth, .auth {
+	float: right;
+	margin-right: 1vw;
+}
+
+/*.auth {
+	display: none;
+}*/

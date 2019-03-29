@@ -11,8 +11,8 @@ const DATA_COLORING_ARRAY = [
     ["[", "<code class='success'>[</code>"],
     ["]", "<code class='success'>]</code>"]
 ];
-const ELEMENTS = ["div #create-file", "div #save-create", "div #open-file", "#rename-file", "div #save-file","#close-file", "#save-last-file", "#close-last-file", "div #run-button", "div #run-debug-button", "div #run-onebug-button", "#enter-success", "#enter-cansel", "#debug-success", "#onebug-success", "#debug-cansel", "div div #output-show-button", "div #output-close-button", "div #output-clear-button", "div #about-button", "#ok-alert", "body"];
-const EVENTS_CLICK = [create, saveCreation, open, rename, save, close, saveLastFile, closeLastFile, runInterpretation, runDebug, runOneBug, enterSuccess, enterCansel, debugSuccess, oneBugSuccess, degusCansel, showOutputButton, closeOutputButton, clearOutputButton, sendAbout, onOkAlert, hideMenu];
+const ELEMENTS = ["div #create-file", "div #save-create", "div #open-file", "#rename-file", "div #save-file","#close-file", "#save-last-file", "#close-last-file", "div #run-button", "div #run-debug-button", "div #run-onebug-button", "#enter-success", "#enter-cansel", "#debug-success", "#onebug-success", "#debug-cansel", "div div #output-show-button", "div #output-close-button", "div #output-clear-button", "div #about-button", "#ok-alert", "body", "#entrance", "#registration", "#entrance-success", "#registration-success", "#exit", "div #save-server-file", "div #open-server-file", "div #delete-server-file", "#ok-file"];
+const EVENTS_CLICK = [create, saveCreation, open, rename, save, close, saveLastFile, closeLastFile, runInterpretation, runDebug, runOneBug, enterSuccess, enterCansel, debugSuccess, oneBugSuccess, degusCansel, showOutputButton, closeOutputButton, clearOutputButton, sendAbout, onOkAlert, hideMenu, onEntrance, onRegistration, entranceSuccess, registrationSuccess, onExit, onServerSave, openServerFile, deleteServerFile, onFileChose];
 
 const OPERATIONS = [">", "<", "+", "-", ".", ",", "!", "[", "]"], DEFAULT_FILE_NAME = "new.bf", BITS = 3, TWELVE_BIT_RESTRICTION = 4095, CELLS_QUANTITY = 300;
 const FUNCTIONS = [incrementPointer, decrementPointer, incrementValue, decrementValue, outputValue, inputValue, debugData, startCycle, endCycle];
@@ -96,6 +96,10 @@ function isInt(string){
 
 function isHexInt(string){
     return string.match(/^[-\+]?[0-9a-fA-F]+/) !== null;
+}
+
+function isEmail(string){
+    return string.match(/^[0-9a-zA-Z]{3,20}@[a-zA-Z]{2,6}\.[a-z]{2,5}$/) !== null;
 }
 
 
@@ -440,7 +444,7 @@ function checkFile(fileData) {
 }
 
 function replaceOuterData(text) {
-    return replaceSpecialSimbols(text.replaceAllFrom("<", "&lt;").replaceAllFrom(">", "&gt;"));
+    return replaceSpecialSimbols(replaceChars(text));
 }
 
 function onPaste(event) {
@@ -1036,4 +1040,185 @@ function focusoutDataCode(event) {
         $(this).val(Number($(this).val()));
     }
     $(this).parent().children("#enter-data-simbol").val(String.fromCharCode($(this).val()));
+}
+
+function onEntrance() {
+    $("#entrance-error").text("");
+    showModal("#entranceInApp", true);
+}
+
+function onRegistration() {
+    $("#registration-error").text("");
+    showModal("#registrationInApp", true);
+}
+
+
+function entranceSuccess(data){
+    $("#entrance-error").text("");
+    var mail = $("#entrance-mail").val();
+    var password = $("#entrance-password").val();
+    if(password.length >= 5 && isEmail(mail)){
+        createEntranceAjax("/get", "mail=" + mail + "&password=" + password, onEntranceAjax);
+    } else {
+        $("#entrance-error").text("Некорректные почта и\\или пароль!");
+    }
+}
+
+function createEntranceAjax(path, data, funSucces) {
+    $.ajax({
+        url: path,
+        method: "get",
+        contentType: false, 
+        processData: false,
+        data: data,
+        success: funSucces
+    });
+}
+
+function onEntranceAjax(data) {
+    onAuth(data, "Почта и\\или пароль не существуют!", "#entranceInApp", "#entrance-error");
+}
+
+function registrationSuccess(data){
+    $("#registratuion-error").text("");
+    var mail = $("#registration-mail").val();
+    var login = $("#registration-login").val();
+    var password = $("#registration-password").val();
+    if(password.length >= 5 && login.length >= 5 && isEmail(mail)){
+        createEntranceAjax("/add", "mail=" + mail + "&password=" + password + "&login=" + login, onRegistrationAjax);
+    } else {
+        $("#registration-error").text("Некорректные почта и\\или пароль!");
+    }
+
+}
+
+function onRegistrationAjax(data) {
+    onAuth(data, "Данная почта уже занята!", "#registrationInApp", "#registration-error");
+}
+
+function onAuth(data, message, id, errorId) {
+    if(data.answer == null){
+        $(".no-auth").css({display: "none"});
+        $(".auth").css({display: "block"});
+        $(".auth button").text(data.login);
+        enableButtons(true);
+        $(id).modal("hide");
+    } else {
+        $(errorId).text(message);
+    }
+}
+
+
+function enableButtons(isRemove) {
+    var arrayId = ["div #open-server-file", "div #save-server-file", "div #delete-server-file"];
+    for (var i = 0; i < arrayId.length; i++) {
+        if(isRemove){
+            $(arrayId[i]).removeClass("disabled");
+            $(arrayId[i]).removeAttr("disabled");
+        } else {
+            $(arrayId[i]).addClass("disabled");
+            $(arrayId[i]).attr("disabled", true);
+        }
+    }
+    // $("div #save-server-file").removeClass("disabled");
+    // $("div #delete-server-file").removeClass("disabled");
+    // $("div #open-server-file").removeAttr("disabled");
+    // $("div #save-server-file").removeAttr("disabled");
+    // $("div #delete-server-file").removeAttr("disabled");
+}
+
+function onExit(event) {
+    $(".no-auth").css({display: "block"});
+    $(".auth").css({display: "none"});
+    $(".auth button").text("<Пользователь>");
+    enableButtons(false);
+    $.ajax({
+        url: "/close",
+        method: "get",
+        contentType: false, 
+        processData: false,
+        data: ""
+    });
+}
+
+function onServerSave(event) {
+    $.ajax({
+        url: "/save",
+        method: "get",
+        contentType: false, 
+        processData: false,
+        data: "name=" + fileName + "&data=" +  $("#work-space").text()
+    });
+}
+
+function openServerFile(event) {   
+    getFileAjax(showFileListOpen);
+}
+
+function deleteServerFile(event) {  
+    getFileAjax(showFileListDelete);
+}
+
+function getFileAjax(functionGet) {
+    $.ajax({
+        url: "/filelist",
+        method: "get",
+        contentType: false, 
+        processData: false,
+        data: "",
+        success: functionGet
+    });
+}
+
+function showFileListOpen(data) {
+    showFileList(data, "Выберите файл для открытия:", "Открыть");
+}
+
+function showFileListDelete(data) {
+    showFileList(data, "Выберите файл для удаления:", "Удалить");
+}
+
+function showFileList(data, message, buttonName) {
+    $("#chose-file").text(message);
+    $("#ok-file").text(buttonName);
+    var selection = $("#file-select").empty();
+    if(data.files != null) {
+        for (var i = 0; i < data.files.length; i++) {
+            selection.append($("<option>", {"text": data.files[i]}));
+        }
+    }
+    showModal("#showFileLish", true);
+}
+
+function onFileChose(event) {
+    var selectedName = $("#file-select :selected").text();
+    if(selectedName != "") {
+        if($(this).text() == "Открыть") {
+            createAjaxChange(selectedName, "/openfile", onOpenServerFile);
+        } else {
+            createAjaxChange(selectedName, "/removefile", function () {});
+        }
+    }
+    $("#showFileLish").modal("hide");
+}
+
+function createAjaxChange(name, path, functionSuccess) {
+    $.ajax({
+        url: path,
+        method: "get",
+        contentType: false, 
+        processData: false,
+        data: "name=" + name,
+        success: functionSuccess
+    });
+}
+
+function onOpenServerFile(data) {
+    $("#work-space").html(replace(replaceSpecialSimbols(replaceChars(data.data)), true));
+    fileName = data.filename;
+    changeFileName();
+}
+
+function replaceChars(text) {
+    return text.replaceAllFrom("<", "&lt;").replaceAllFrom(">", "&gt;");
 }
